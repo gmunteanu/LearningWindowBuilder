@@ -1,0 +1,192 @@
+x#PostgreS#PostgreS DB script
+
+CREATE USER admin WITH
+	LOGIN
+	SUPERUSER
+	CREATEDB
+	CREATEROLE
+	INHERIT
+	REPLICATION
+	CONNECTION LIMIT -1
+	PASSWORD 'root';
+GRANT postgres TO admin WITH ADMIN OPTION;
+
+
+
+-- Role: admin_rugina
+-- DROP ROLE admin_rugina;
+
+CREATE ROLE admin_rugina WITH
+  NOLOGIN
+  NOSUPERUSER
+  INHERIT
+  NOCREATEDB
+  NOCREATEROLE
+  REPLICATION;
+
+COMMENT ON ROLE admin_rugina IS 'Main medical user - password 123456';
+
+CREATE DATABASE "CabinetRugina"
+    WITH 
+    OWNER = admin
+    ENCODING = 'UTF8'
+    CONNECTION LIMIT = -1;
+
+COMMENT ON DATABASE "CabinetRugina"
+    IS 'Baza de date cabinet Rugina Cosmin';
+	
+-- SEQUENCE: public.patient_sequence
+
+-- DROP SEQUENCE public.patient_sequence;
+
+CREATE SEQUENCE public.patient_sequence;
+
+ALTER SEQUENCE public.patient_sequence
+    OWNER TO admin;
+	
+-- SEQUENCE: public.dosare_sequence
+
+-- DROP SEQUENCE public.dosare_sequence;
+
+CREATE SEQUENCE public.dosare_sequence;
+
+ALTER SEQUENCE public.dosare_sequence
+    OWNER TO admin;
+	
+-- SEQUENCE: public.consultatii_id_seq
+
+-- DROP SEQUENCE public.consultatii_id_seq;
+
+CREATE SEQUENCE public.consultatii_id_seq;
+
+ALTER SEQUENCE public.consultatii_id_seq
+    OWNER TO postgres;	
+	
+-- SEQUENCE: public.antecedente_id_seq
+
+-- DROP SEQUENCE public.antecedente_id_seq;
+
+CREATE SEQUENCE public.antecedente_id_seq;
+
+ALTER SEQUENCE public.antecedente_id_seq
+    OWNER TO admin_rugina;
+	
+-- SEQUENCE: public.atasamente_id_seq
+
+-- DROP SEQUENCE public.atasamente_id_seq;
+
+CREATE SEQUENCE public.atasamente_id_seq;
+
+ALTER SEQUENCE public.atasamente_id_seq
+    OWNER TO postgres;
+--------------------------------------------------------------------------------------------
+
+-- Table: public.paciente
+
+-- DROP TABLE public.paciente;
+
+CREATE TABLE public.paciente
+(
+    id integer NOT NULL DEFAULT nextval('patient_sequence'::regclass),
+    nume character varying(70) COLLATE pg_catalog."default" NOT NULL,
+    prenume character varying(70) COLLATE pg_catalog."default" NOT NULL,
+    data_nasterii date NOT NULL,
+    cnp character varying(13) COLLATE pg_catalog."default",
+    altele character varying(3000) COLLATE pg_catalog."default",
+    data_inscriere date NOT NULL,
+    nasteri_naturale numeric,
+    cezariene numeric,
+    avorturi_cerere numeric,
+    avorturi_spontane numeric,
+    CONSTRAINT "Paciente_pkey" PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.paciente
+    OWNER to admin;
+COMMENT ON TABLE public.paciente
+    IS 'Tabel Paciente';
+
+	
+--------------------------------------------------------------------------------------------	
+-- Table: public.consultatii
+
+-- DROP TABLE public.consultatii;
+
+CREATE TABLE public.consultatii
+(
+    id bigint NOT NULL DEFAULT nextval('consultatii_id_seq'::regclass),
+    id_pacienta bigint NOT NULL,
+    data_consultatie date NOT NULL,
+    consultatie character varying(5000) COLLATE pg_catalog."default",
+    alte_observatii character varying COLLATE pg_catalog."default",
+    CONSTRAINT consultatie_primarykey PRIMARY KEY (id),
+    CONSTRAINT consultatie_pacient_foreignkey FOREIGN KEY (id_pacienta)
+        REFERENCES public.paciente (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.consultatii
+    OWNER to postgres;
+	
+ALTER TABLE public.paciente
+    ADD COLUMN telefon character varying(15);
+	
+-- Table: public.antecedente
+
+-- DROP TABLE public.antecedente;
+
+CREATE TABLE public.antecedente
+(
+    id bigint NOT NULL DEFAULT nextval('antecedente_id_seq'::regclass),
+    pacient_id integer,
+    antecedent character varying(4000) COLLATE pg_catalog."default" NOT NULL,
+    data_inregistrare date NOT NULL,
+    CONSTRAINT antecedente_pkey PRIMARY KEY (id),
+    CONSTRAINT antecedent_pacient_primarykey FOREIGN KEY (pacient_id)
+        REFERENCES public.paciente (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.antecedente
+    OWNER to admin_rugina;
+	
+	-- Table: public.atasamente
+
+-- DROP TABLE public.atasamente;
+
+CREATE TABLE public.atasamente
+(
+    id bigint NOT NULL DEFAULT nextval('atasamente_id_seq'::regclass),
+    pacient_id bigint NOT NULL,
+    nume_fisier character varying COLLATE pg_catalog."default" NOT NULL,
+    tip_fisier character varying COLLATE pg_catalog."default" NOT NULL,
+    atasament bytea NOT NULL,
+    data_salvare date,
+    lungime_fisier bigint,
+    CONSTRAINT atasamente_pkey PRIMARY KEY (id),
+    CONSTRAINT foreignkey_atasamente_pacient FOREIGN KEY (pacient_id)
+        REFERENCES public.paciente (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.atasamente
+    OWNER to postgres;
