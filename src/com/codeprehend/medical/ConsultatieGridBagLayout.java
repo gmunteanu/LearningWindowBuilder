@@ -11,10 +11,13 @@ import javax.swing.JLabel;
 import java.awt.Insets;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 public class ConsultatieGridBagLayout {
 
 	private JFrame frame;
+	private JTextField textAntecedente;
 
 	/**
 	 * Launch the application.
@@ -52,14 +55,14 @@ public class ConsultatieGridBagLayout {
 		frame.getContentPane().add(GridBagLayoutPanel, BorderLayout.CENTER);
 		GridBagLayout gbl_GridBagLayoutPanel = new GridBagLayout();
 		gbl_GridBagLayoutPanel.columnWidths = new int[] {0};
-		gbl_GridBagLayoutPanel.rowHeights = new int[] {0};
-		gbl_GridBagLayoutPanel.columnWeights = new double[]{0.0};
-		gbl_GridBagLayoutPanel.rowWeights = new double[]{0.0};
+		gbl_GridBagLayoutPanel.rowHeights = new int[] {0, 0};
+		gbl_GridBagLayoutPanel.columnWeights = new double[]{1.0};
+		gbl_GridBagLayoutPanel.rowWeights = new double[]{0.0, 1.0};
 		GridBagLayoutPanel.setLayout(gbl_GridBagLayoutPanel);
 		
 		JPanel InformationGridBagLayoutPanel = new JPanel();
 		GridBagConstraints gbc_InformationGridBagLayoutPanel = new GridBagConstraints();
-		gbc_InformationGridBagLayoutPanel.insets = new Insets(25, 25, 25, 25);
+		gbc_InformationGridBagLayoutPanel.insets = new Insets(25, 25, 10, 25);
 		gbc_InformationGridBagLayoutPanel.weightx = 1.0;
 		gbc_InformationGridBagLayoutPanel.fill = GridBagConstraints.BOTH;
 		gbc_InformationGridBagLayoutPanel.gridx = 0;
@@ -112,6 +115,53 @@ public class ConsultatieGridBagLayout {
 		gbc_TelefonLabel.gridx = 4;
 		gbc_TelefonLabel.gridy = 0;
 		InformationGridBagLayoutPanel.add(TelefonLabel, gbc_TelefonLabel);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.insets = new Insets(0, 25, 25, 25);
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 1;
+		GridBagLayoutPanel.add(scrollPane, gbc_scrollPane);
+		
+		JPanel panel = new JPanel();
+		scrollPane.setColumnHeaderView(panel);
+		
+		JPanel panel_1 = new JPanel();
+		scrollPane.setRowHeaderView(panel_1);
+		
+		JPanel medicalInfoPanel = new JPanel();
+		scrollPane.setViewportView(medicalInfoPanel);
+		GridBagLayout gbl_medicalInfoPanel = new GridBagLayout();
+		gbl_medicalInfoPanel.columnWidths = new int[]{0, 0, 0};
+		gbl_medicalInfoPanel.rowHeights = new int[]{0, 0, 0, 0};
+		gbl_medicalInfoPanel.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gbl_medicalInfoPanel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		medicalInfoPanel.setLayout(gbl_medicalInfoPanel);
+		
+		JLabel AntecedenteLabel = new JLabel("New label");
+		GridBagConstraints gbc_AntecedenteLabel = new GridBagConstraints();
+		gbc_AntecedenteLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_AntecedenteLabel.anchor = GridBagConstraints.WEST;
+		gbc_AntecedenteLabel.gridx = 0;
+		gbc_AntecedenteLabel.gridy = 0;
+		medicalInfoPanel.add(AntecedenteLabel, gbc_AntecedenteLabel);
+		
+		textAntecedente = new JTextField();
+		GridBagConstraints gbc_textAntecedente = new GridBagConstraints();
+		gbc_textAntecedente.insets = new Insets(0, 0, 5, 0);
+		gbc_textAntecedente.gridwidth = 5;
+		gbc_textAntecedente.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textAntecedente.gridx = 0;
+		gbc_textAntecedente.gridy = 1;
+		medicalInfoPanel.add(textAntecedente, gbc_textAntecedente);
+		textAntecedente.setColumns(10);
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+		gbc_lblNewLabel.gridx = 1;
+		gbc_lblNewLabel.gridy = 2;
+		medicalInfoPanel.add(lblNewLabel, gbc_lblNewLabel);
 	}
 
 }
